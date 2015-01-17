@@ -31,7 +31,7 @@ public class IBundleManagerImpl implements IBundleManager {
 
     private final Injector injector;
     private final IBundle bundle;
-    private final String name;
+    private final String bundleName;
     private String defaultControllerName;
 
     private final HashMap<String, IControllerManager> controllers = new HashMap<>();
@@ -42,6 +42,10 @@ public class IBundleManagerImpl implements IBundleManager {
 
                 @Override
                 public IControllerManager load(String key) throws Exception {
+                    
+                    injector.getInstance(Logger.class).info(String.format("Load controller `%s` in `%s` bundle", key,bundleName));
+                    
+
                     return createControllerManager(key);
                 }
             });
@@ -51,12 +55,12 @@ public class IBundleManagerImpl implements IBundleManager {
     public IBundleManagerImpl(Injector injector, IBundle bundle, String name) {
         this.injector = injector;
         this.bundle = bundle;
-        this.name = name;
+        this.bundleName = name;
     }
 
     @Override
     public String getName() {
-        return name;
+        return bundleName;
     }
 
     @Override
@@ -66,20 +70,24 @@ public class IBundleManagerImpl implements IBundleManager {
 
     public IControllerManager createControllerManager(String name) throws MissingController {
         for (Class<?> cls : bundle.getControllers()) {
-            IControllerManager c = loockup(cls);
+            IControllerManager c = loockup(name, cls);
             if (c != null) return c;
         }
 
         throw new MissingController(String.format("`%s` the controller not found in `%s` bundle", name, getName()));
     }
 
-    private IControllerManager loockup(Class<?> cls) {
+    private IControllerManager loockup(String name, Class<?> cls) {
         if (cls == null) return null;
         Controller cAnnotation = cls.getAnnotation(Controller.class);
         if (cAnnotation != null) {
-            String cName = cAnnotation.name();
-            if (FStringUtils.isEmptyOrNull(cName))
-                cName = FStringUtils.firstLower(cls.getSimpleName());
+            String cName;
+            try {
+                cName = BundleUtil.getControllerName(cls);
+            } catch (MissingController ex) {
+                throw new RuntimeException(ex);
+            }
+
             if (name.equals(cName)) {
                 Object contollerObject = injector.getInstance(cls);
                 //injector.injectMembers(contollerObject);
@@ -87,7 +95,7 @@ public class IBundleManagerImpl implements IBundleManager {
                 if (contollerObject instanceof BundleSetter)
                     ((BundleSetter) contollerObject).setBundle(bundle);
 
-                return new IControllerManagerImpl(contollerObject, injector, name, this);
+                return new IControllerManagerImpl(contollerObject, injector, cName, this);
             }
 
         }

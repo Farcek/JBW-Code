@@ -29,9 +29,8 @@ public abstract class JBWConfig implements IConfig {
         if (configDir == null) {
 
             String homeDir = System.getProperty("user.home");
-            if (homeDir == null) {
+            if (homeDir == null)
                 throw new RuntimeException("not defined System property `user.home`");
-            }
 
             configDir = System.getProperty("user.home") + File.separator + "." + getApplicationKey();
 
@@ -63,9 +62,8 @@ public abstract class JBWConfig implements IConfig {
 
     @Override
     public File getDirOfResource() {
-        if (dirOfResource == null) {
+        if (dirOfResource == null)
             dirOfResource = new File(confProperties().getProperty("dirOfResource"));
-        }
 
         return dirOfResource;
     }
@@ -77,11 +75,10 @@ public abstract class JBWConfig implements IConfig {
     public String getWebDomain() {
         if (webDomain == null) {
             webDomain = confProperties().getProperty("webDomain");
-            if (webDomain == null) {
+            if (webDomain == null)
                 webDomain = "";
-            } else if (webDomain.endsWith("/")) {
+            else if (webDomain.endsWith("/"))
                 webDomain = webDomain.substring(0, webDomain.length() - 1);
-            }
         }
         return webDomain;
     }
@@ -93,19 +90,26 @@ public abstract class JBWConfig implements IConfig {
 
     @Override
     public String getLoginPage() {
-        return confProperties().getProperty("loginPage","/login.html");
+        return confProperties().getProperty("loginPage", "/login.html");
     }
-    
-    
 
     private Boolean debug;
 
     @Override
     public boolean isDebug() {
-        if (debug == null) {
+        if (debug == null)
             debug = Boolean.valueOf(confProperties().getProperty("debug", "false"));
-        }
         return debug;
+    }
+
+    private String buildVersion;
+
+    public String getBuildVersion() {
+        if (buildVersion == null) {
+            buildVersion = confProperties().getProperty("build.version");
+            if (buildVersion == null) buildVersion = "0";
+        }
+        return buildVersion;
     }
 
     private Locale locale;
@@ -114,11 +118,10 @@ public abstract class JBWConfig implements IConfig {
     public Locale getDefaultLocale() {
         if (locale == null) {
             String l = confProperties().getProperty("locale", null);
-            if (l == null) {
+            if (l == null)
                 locale = Locale.ENGLISH;
-            } else {
+            else
                 locale = new Locale(l);
-            }
         }
         return locale;
     }
@@ -128,9 +131,8 @@ public abstract class JBWConfig implements IConfig {
 
     @Override
     public boolean isTemplateCache() {
-        if (templateCache == null) {
+        if (templateCache == null)
             templateCache = Boolean.valueOf(confProperties().getProperty("templateCache", "false"));
-        }
         return templateCache;
     }
 
@@ -149,6 +151,7 @@ public abstract class JBWConfig implements IConfig {
     public String getPathOfResourceHandler() {
         return confProperties().getProperty("pathOfResourceHandler", "/resources");
     }
+
     @Override
     public String getPathOfImageResourceHandler() {
         return confProperties().getProperty("pathOfImageResourceHandler", "/resource-images");
@@ -158,9 +161,8 @@ public abstract class JBWConfig implements IConfig {
 
     @Override
     public List<Class<? extends IBundle>> getBundles() {
-        if (bundles == null) {
+        if (bundles == null)
             setupBundles(bundles = new ArrayList<>());
-        }
 
         return bundles;
     }

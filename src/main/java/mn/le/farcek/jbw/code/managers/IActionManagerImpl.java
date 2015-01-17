@@ -209,6 +209,8 @@ public class IActionManagerImpl implements IActionManager {
 
             attrs.put("request", actionParamFactory.factoryActionRequest());
             attrs.put("session", actionParamFactory.factoryActionSession());
+            attrs.put("__config", injector.getInstance(IConfig.class));
+            
             template.render(writer, attrs, actionParamFactory.factoryActionRequest().getLocale());
         }
 

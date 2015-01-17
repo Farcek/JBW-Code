@@ -64,17 +64,23 @@ public class ISecurityManagerImpl implements ISecurityManager {
         if (user == null) {
             throw new NullPointerException();
         }
+        
+        
+        
         session.setAttribute(JBW_CURRENT_USER_ATTR, user);
 
         // role
         List<String> userRoles = user.getRoles();
         Set<String> roles = new HashSet<>();
-        if (userRoles == null) {
+        if (userRoles != null) {
             for (String r : userRoles) {
                 roles.add(r);
             }
         }
         roles.add(JBW_MEMBER_ROLE);
+        
+      
+        
         session.setAttribute(JBW_CURRENT_ROLES_ATTR, roles);
     }
 
