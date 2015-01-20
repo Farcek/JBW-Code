@@ -68,6 +68,28 @@ public abstract class JBWConfig implements IConfig {
         return dirOfResource;
     }
 
+    // --
+    private File tempDirOfResource;
+
+    @Override
+    public File getTempDirOfResource() {
+        if (tempDirOfResource == null) {            
+            tempDirOfResource = new File(getDirOfResource(), getTempDirName());
+        }
+
+        return tempDirOfResource;
+    }
+    // --
+    private String tempDirName;
+
+    @Override
+    public String getTempDirName() {
+        if (tempDirName == null) {
+            tempDirName= confProperties().getProperty("tempDirOfResource", "_temp");
+        }
+        return tempDirName;
+    }
+
     // ---
     private String webDomain;
 

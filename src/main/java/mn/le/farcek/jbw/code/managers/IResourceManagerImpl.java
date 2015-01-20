@@ -5,6 +5,7 @@
  */
 package mn.le.farcek.jbw.code.managers;
 
+import com.google.common.io.Files;
 import com.google.inject.Inject;
 import java.awt.Graphics;
 import java.awt.Transparency;
@@ -47,6 +48,28 @@ public class IResourceManagerImpl implements IResourceManager {
     }
 
     @Override
+    public ResourceResult createTemp(IActionRequestPart actionRequestPart) throws IOException {
+
+        if (actionRequestPart == null)
+            return null;
+
+        File dir = config.getTempDirOfResource();
+
+        return create(actionRequestPart, dir);
+
+    }
+
+    @Override
+    public ResourceResult createFromTemp(String resourceName) throws IOException {
+        File t = config.getTempDirOfResource();
+        File o = config.getDirOfResource();
+
+        Files.move(new File(t, resourceName), new File(o, resourceName));
+
+        return new ResourceResult(o, resourceName, resourceName);
+    }
+
+    @Override
     public ResourceResult create(IActionRequestPart actionRequestPart, File dir) throws IOException {
         String fileName = actionRequestPart.getSubmittedFileName();
         if (fileName == null || fileName.isEmpty())
@@ -59,7 +82,7 @@ public class IResourceManagerImpl implements IResourceManager {
             FFileUtils.write(is, new File(dir, resourceName));
         }
 
-        return new ResourceResult(dir,fileName, resourceName);
+        return new ResourceResult(dir, fileName, resourceName);
     }
 
     @Override
@@ -73,8 +96,13 @@ public class IResourceManagerImpl implements IResourceManager {
     }
 
     @Override
-    public String resourceUrl(String resourceName) throws MissingResource {
+    public String resourceUrl(String resourceName) {
         return config.getContextPath() + config.getPathOfResourceHandler() + "/" + resourceName;
+    }
+
+    @Override
+    public String resourceTempUrl(String resourceName) {
+        return config.getContextPath() + config.getPathOfResourceHandler() + "/" + config.getTempDirName()+ "/" + resourceName;
     }
 
     @Override

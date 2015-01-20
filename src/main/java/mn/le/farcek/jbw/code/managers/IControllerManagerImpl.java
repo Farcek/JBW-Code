@@ -45,27 +45,22 @@ public class IControllerManagerImpl implements IControllerManager {
     public IBundleManager getBundleManager() {
         return bundleManager;
     }
-    
-    
 
     @Override
     public IActionManager getActionManager(String name) throws MissingAction {
-        if (name == null) {
+        if (name == null)
             throw new NullPointerException();
-        }
 
         IActionManager action = actions.get(name);
-        if (action instanceof IActionManager) {
+        if (action instanceof IActionManager)
             return action;
-        }
 
         for (Method m : controllerObject.getClass().getMethods()) {
             Action aAnnotation = m.getAnnotation(Action.class);
             if (aAnnotation != null) {
                 String aName = aAnnotation.name();
-                if (FStringUtils.isEmpty(aName)) {
+                if (FStringUtils.isEmpty(aName))
                     aName = m.getName();
-                }
 
                 if (name.equals(aName)) {
                     action = new IActionManagerImpl(controllerObject, m, aName, this, injector);
@@ -77,7 +72,7 @@ public class IControllerManagerImpl implements IControllerManager {
 
         }
 
-        throw new MissingAction();
+        throw new MissingAction(String.format("not found action `%s` in controller `%s` ", name, this.name));
     }
 
 }

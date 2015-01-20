@@ -268,6 +268,8 @@ public class IActionManagerImpl implements IActionManager {
                 return actionParamFactory.factoryResponseHeader();
             else if (parameterType.equals(IActionSession.class))
                 return session;
+            else if (parameterType.equals(IActionSecurity.class))
+                return actionParamFactory.factorySecurity();
             else if (parameterType.equals(IActionMethod.class))
                 return request.getMethod();
             else if (parameterType.equals(HttpRequest.class))
