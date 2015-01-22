@@ -110,9 +110,9 @@ public class JBWImageResourceHandlerServlet extends HttpServlet {
                     }
 
                 } catch (NumberFormatException e) {
-
+                    throw new ServletException(e);
                 } catch (MissingResource ex) {
-                    Logger.getLogger(JBWImageResourceHandlerServlet.class.getName()).log(Level.SEVERE, null, ex);
+                    throw new ServletException(ex);
                 }
             } else {
                 throw new ServletException("not define page");
